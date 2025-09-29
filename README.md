@@ -5,3 +5,5 @@ This is also the first version of each method, I will be updating new versions.
 Keep in mind that it will be necessary to compile the C++ file before using it and also, check out that for each method, there is a python file inside of it, both have to be on the same folder so it works and once the C++ code is compile, the programar needs to be executed from the program.exe that C++ created. 
 
 I'm opened to sugestions. I will be uploading more.
+
+Due to the python scripts are executed from the C++ script, it is very necesary that you chang this line for example: system("\"C:\\Users\\jdecr\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" VisualizationBisectionMethod.py"); if you want to test the code your nachine.  
