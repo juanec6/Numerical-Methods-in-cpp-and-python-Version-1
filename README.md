@@ -1,2 +1,2 @@
 # Numerical-Methods-in-cpp-and-python.-VERSION-1
-The purpose of this repository is to show how numerical methods can be implemented in c++ to provide iterative results and in python for visualization and analysis.
+The purpose of this repository is to show how numerical methods can be implemented in c++ to provide iterative results and python for visualization and analysis. This will cover topics from roots finding and hybrid methods for roots finding, linear systems of algebraic equations using direct methods and iterative methods, interpolation, extrapolation, approximation, numerical derivatives and integrals, finishing with ordinary differential equations and partial differential equations. 
