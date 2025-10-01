@@ -24,7 +24,7 @@ double f(double x, int opcion){
 }
 
 
-// This will be the first derivate of f(x) 
+// This will be the first derivate of f(x) which is necessary for iterations
 double df(double, opcion){
 	switch(opcion){
 		case 1: cos(x) + 1.5*cos(3*x) + 1.25*cos(5*x);
@@ -34,6 +34,23 @@ double df(double, opcion){
 		case 5: (-6 + x + pow(x, 2))*cos(x) + (1 + 2 x)*sin(x);
 		case 6: exp(-x/10)/10 - sin(x);
 		case 7: 
+		default: return 0;
+	}
+
+}
+
+// Now we need the second derivate to check convergence of NewtonRapshon's method
+double ddf(double x, opcion){
+	switch(opcion){
+		case 1: -sin(x) - 4.5*sin(3*x) - 6.25*sin(5*x);
+		case 2: ( exp(-pow(x, 2) / 100.0) * 
+              ( (pow(x, 2) - 6250050.0) * sin(50.0 * x) - 5000.0 * x * cos(50.0 * x) ) 
+             ) / 2500.0;
+        case 3: -9*sin*(3*x) - sin(x);
+        case 4: -4*cos(x)*sin(x);
+        case 5: ((-pow(x, 2) - x + 8) * sin(x)) + ((4 * x + 2) * cos(x));
+        case 6: -cos(x) - (exp(-x / 10.0) / 100.0);
+        case 7: -cos(x);
 		default: return 0;
 	}
 }
