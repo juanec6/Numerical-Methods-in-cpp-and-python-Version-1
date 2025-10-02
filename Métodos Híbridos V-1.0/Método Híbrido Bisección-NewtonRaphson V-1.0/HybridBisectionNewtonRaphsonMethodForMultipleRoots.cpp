@@ -1,3 +1,6 @@
+// Validar las entradas del usuario (intervalos correctos, pasos >0, opciones válidas) 
+// Validar que xi < xf 
+
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -38,7 +41,8 @@ double f(double x, int option){
 }
 
 
-// This will be the first derivate of f(x) 
+// This will be the first derivate of f(x) which will need to be updated if updated f(x, opcion)
+// Wich means that you need to calculate the first derivate of the functions updated in the previous functions 
 double df(double x, int option){
 	switch(option){
 		case 1: return cos(x) + 1.5*cos(3.0*x) + 1.25*cos(5.0*x);
@@ -53,6 +57,7 @@ double df(double x, int option){
 }
 
 // Now we need the second derivate to check convergence of NewtonRapshon's method
+// if f(x, opcion) you will ned find the second derivates for this function ddf as well
 
 double ddf(double x, int option){
 	switch(option){
@@ -75,8 +80,12 @@ int main() {
     
     do {
         system("cls"); 
-        int option;
-
+        int option, option2, option3, maxIter = 2000;
+		double xi, xf, tolBi = 1e-3, tolUser, absErr = 1e-8 , relErr = absErr*100.00, relErrUser, step;
+		/* I choose this tolBi to be the deffect tolerance for the bisection method to stop,
+		since the purpose of this hybrid method is to use less computational power and get a faster result with newton method. 
+		tolUser is in case the the user knows or requires an specific tolerance and understand that it will take more computational power.
+		Now, */ 
         cout << "----- HYBRID BISECTION AND NEWTON-RAPHSON FOR FINDING MULTIPLE ROOTS -----" << endl;
         cout <<endl;
         cout<<endl;
@@ -90,10 +99,64 @@ int main() {
         cout << "6. f(x) = cos(x) - exp(-x/10.0)" << endl;
         cout << "7. f(x) = cos(x)" << endl;
         cout << endl;
-        cout << "Please select a function to test:" << endl;
+        cout << "Please select a function to test (select one number from 1 to 7): ";
         cin >> option;
+        cout << "\nSelected function: " << funcion_str(option) << endl;
+        cout << endl;
+        cout << "Please select the interval [xi, xf] you want to evaluate:"<<endl;
+        cout << "xi = ";
+        cin >> xi;
+        cout << "xf = ";
+        cin >> xi;
+        cout << "Please select the step for each iteration e.g (1, 0.5, .., 0.1): ";
+        cin >> step;
+        cout << endl;
+        
+        cout << "¡¡TOLERANCE DISCLAIMER FOR BISECTION METHOD!!"<<endl;
+        // let's talk about tolerance
+        cout << "In metrology, tolerance is the margin of error or variation allowed\n"
+     		 << "in the manufacturing of a part with respect to its dimension or\n"
+     		 << "characteristic specified in the drawing, guaranteeing its functionality."
+     		 << endl;
+    	cout << endl;
+    	cout << "In numerical methods, tolerance is the allowed error limit\n"
+     		 << "used to stop iterative algorithms when the solution is close enough,\n"
+     		 << "balancing accuracy with computational cost." 
+			 << endl;
+			 
+		cout << endl;
+		cout << "If you need an specific tolerance for the bisection method press 1, otherwise, press 2: ";
+		cin >> option2;
+		cout << endl;
 		
-        cout << "Selected function: " << funcion_str(option) << endl;
+		// In case the user needs an specific tolerance for the bisection method to stop, he/him will be able to do it, otherwise, a default tolerance will be used
+		if(option2 == 1){
+			cout << "Please enter the tolerance needed to stop iterations for bisection method: ";
+			cin >> tolUser;
+			cout << endl;
+		} else {
+			cout <<"Default tolerance to stop bisection method iterations is: "<< tolBi << endl;
+		}
+		
+		cout<<endl;
+		cout << "This program calculates the stopping criteria for the newton-rapshon method using a relative error.\n"
+			 << "If you need an specific relative error to stop the the iterations, press 1, otherwise, press 2: ";
+		cin >> option3;
+		cout << endl;
+		
+		//In case the user needs an specific relative error
+		if(option3 == 1){
+			cout << "Please enter the relative error required to stop iterations (Enter a percentage number, e.g 10%, 56%,..100% without the % symbol): ";
+			cin >> relErrUser;
+			cout << endl;
+		} else {
+			cout << "The default relative error for stopping newton-rapshon iterations is: " << relErr << "%" << endl;
+		}
+		cout << endl;
+		cout << "This program will stop at 2000 iterations if has not reached the paremeters entered" << endl;
+		cout << "Iterating..."<<endl;
+		cout << endl;
+        
 
         cout << "Want to try a different function? (1 = yes, 0 = no): ";
         cin >> repeat;
@@ -102,3 +165,7 @@ int main() {
 
     return 0;
 }
+
+    return 0;
+}
+
