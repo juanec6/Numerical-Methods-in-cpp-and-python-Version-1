@@ -1,9 +1,28 @@
 # Numerical-Methods-in-cpp-and-python-version-1
-The purpose of this repository is to show how numerical methods can be implemented in c++ to provide iterative results and python for visualization and analysis. This will cover topics from roots finding and hybrid methods for roots finding, linear systems of algebraic equations using direct methods and iterative methods, interpolation, extrapolation, approximation, numerical derivatives and integrals, finishing with ordinary differential equations and partial differential equations. 
-This will only work if you a Windows OS, won't run on MACBOOK OS due to a C++ library used on the codes.
-This is also the first version of each method, I will be updating new versions. 
-Keep in mind that it will be necessary to compile the C++ file before using it and also, check out that for each method, there is a python file inside of it, both have to be on the same folder so it works and once the C++ code is compile, the programar needs to be executed from the program.exe that C++ created. 
 
-I'm opened to sugestions. I will be uploading more.
+The purpose of this repository is to show how **numerical methods** can be implemented in **C++** to provide iterative results and in **Python** for visualization and analysis.  
 
-Due to the python scripts are executed from the C++ script, it is very necesary that you chang this line for example: system("\"C:\\Users\\jdecr\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" VisualizationBisectionMethod.py"); if you want to test the code your nachine.  
+This repository covers:  
+- Root finding methods (Bisection, Newton–Raphson, Hybrid methods)  
+- Linear systems of algebraic equations (direct and iterative methods)  
+- Interpolation, extrapolation, and approximation  
+- Numerical derivatives and integrals  
+- Ordinary differential equations (ODEs)  
+- Partial differential equations (PDEs)  
+
+⚠️ **Important:**  
+- This version only works on **Windows OS** due to a C++ library used. It will not run on macOS.  
+- Each method includes a **C++ file** (for calculations) and a **Python file** (for visualization). Both must be in the same folder.  
+- Compile the C++ code first, then run the generated `.exe` file. The `.exe` will call the Python script for plotting.  
+
+Example line to adjust in your environment:  
+```cpp
+system("\"C:\\Path\\to\\Python\\python.exe\" VisualizationBisectionMethod.py");
+⚖️ Legal Notice
+
+Copyright © 2025 Juan David Escobar Cruz
+
+All rights reserved. This repository and its contents are the intellectual property of the author.
+You may not copy, modify, distribute, or use any part of this code or documentation for commercial, educational, or research purposes without explicit written permission from the author.
+
+If you wish to collaborate, use, or redistribute any part of this project, please contact the author directly.
