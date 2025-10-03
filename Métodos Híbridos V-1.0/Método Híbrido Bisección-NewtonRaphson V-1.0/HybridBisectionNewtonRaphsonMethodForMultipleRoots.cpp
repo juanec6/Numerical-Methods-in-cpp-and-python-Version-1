@@ -82,9 +82,9 @@ int main() {
     
     do {
         system("cls"); 
-        int option, option2, option3, maxIter = 2000;
+        int option, option2, option3, maxIter = 2000, iter = 0;
 		double xi, xf, tolBi = 1e-3, tolUserBi, tolNR = 1e-3, tolUserNR, absErr = 1e-8 , relErr = absErr*100.00, step;
-		double a, b, fx;
+		double a, b, fx, x0;
 		vector<double> xValues, yValues;
 		/* I choose this tolBi to be the deffect tolerance for the bisection method to stop,
 		since the purpose of this hybrid method is to use less computational power and get a faster result with newton method. 
@@ -105,6 +105,12 @@ int main() {
         cout << endl;
         cout << "Please select a function to test (select one number from 1 to 7): ";
         cin >> option;
+        
+        // Validates user is entering the right option.
+        while(option < 1 || option > 7){
+		    cout << "Invalid option. Please select between 1 and 7: ";
+		    cin >> option;
+		}
         cout << "\nSelected function: " << funcion_str(option) << endl;
         cout << endl;
         cout << "Please select the interval [xi, xf] you want to evaluate:"<<endl;
@@ -112,8 +118,24 @@ int main() {
         cin >> xi;
         cout << "xf = ";
         cin >> xf;
-        cout << "Please select the step for each iteration e.g (1, 0.5, .., 0.1): ";
+        
+        // Validates that xi is less or not equal to xf
+        while(xi>=xf){
+        	cout << "xi can't be bigger or equal to xf, please try again."<< endl;
+        	cout << "Please select the interval [xi, xf] you want to evaluate:"<< endl;
+	        cout << "xi = ";
+	        cin >> xi;
+	        cout << "xf = ";
+	        cin >> xf;
+		}
+        cout << "Please select the step for each iteration e.g (1, 0.5, .., 0.1): " << endl;
+        cout << "step = ";
         cin >> step;
+        while(step <= 0){
+        	cout << "Please select the step for each iteration e.g (1, 0.5, .., 0.1): " << endl;
+	        cout << "step = ";
+	        cin >> step;
+		}
         cout << endl;
         
         cout << "¡¡TOLERANCE AND ERROR DISCLAIMER!!"<<endl;
@@ -186,18 +208,36 @@ int main() {
 		    
         // Iterations start here, first I will start with the bisection method and then when the tolerance is achieved, it will jump right into Newton's-Rapshon method
         for(double i=xi; i<=xf; i = i + step){
+			iter = 0;	
         	a = i;
         	b = i + step;
-        	if(f(a, option)*f(b, option) < 0){
-        		
+        	if(f(a, option)*f(b, option) < 0 && option2 == 1){
+        		do {
+        			x0 = (a+b)/2.0;
+        			if(f(a, option)*f(x0, option) < 0){
+        				b = x0;
+					} else{
+						a = x0;
+					}
+					iter++;
+				} while(abs((b-a)/b) >= tolUserBi && iter <= maxIter ); // This will be for user tolerance input
+			} else {
+				do {
+        			x0 = (a+b)/2.0;
+        			if(f(a, option)*f(x0, option) < 0){
+        				b = x0;
+					} else{
+						a = x0;
+					}
+					iter++;
+				} while(abs(b-a)/abs(b) >= tolBi && iter <= maxIter); // Defatul tolerance 1e-3
 			}
 		}
+		// Now that we got our first approximation x0 when can use it with newton-rapshon method
 
     } while (repeat == 1);
 
     return 0;
 }
-
-
 
 
