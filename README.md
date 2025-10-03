@@ -14,10 +14,11 @@ This repository covers:
 - This version only works on **Windows OS** due to a C++ library used. It will not run on macOS.  
 - Each method includes a **C++ file** (for calculations) and a **Python file** (for visualization). Both must be in the same folder.  
 - Compile the C++ code first, then run the generated `.exe` file. The `.exe` will call the Python script for plotting.  
-
 Example line to adjust in your environment:  
 ```cpp
 system("\"C:\\Path\\to\\Python\\python.exe\" VisualizationBisectionMethod.py");
+````
+
 ⚖️ Legal Notice
 
 Copyright © 2025 Juan David Escobar Cruz
