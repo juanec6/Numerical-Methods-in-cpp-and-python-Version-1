@@ -1,14 +1,16 @@
 // Validar las entradas del usuario (intervalos correctos, pasos >0, opciones válidas) 
 // Validar que xi < xf 
 
-#include <iostream>
-#include <cmath>
-#include <vector>
-#include <iomanip>
-#include <string>
-#include <cstdlib>
-#include <fstream>
-#include <windows.h>  // This makes the programe not portable It will only run on windows. 
+#include <iostream> // Allows standard input and output: cin, cout, cerr
+#include <cmath> // Includes mathematical functions such as sin(), cos(), sqrt(), pow(), exp(), etc.
+#include <vector> // Allows the use of dynamic vectors (arrays that can change size).
+#include <iomanip> // For formatting output, e.g. number of decimals, field width, alignment.
+#include <string> // Enables use of text strings (std::string) and operations with them.
+#include <cstdlib> // Includes general utility functions: srand() for random numbers, system() 
+                  // to execute system commands, abs(), exit(), string-to-number conversions (atoi, atof).
+#include <fstream> // For file handling: reading (ifstream), writing (ofstream), and both (fstream).
+#include <windows.h> // Windows-specific library for using operating system functions.
+
 
 using namespace std;
 
@@ -81,7 +83,9 @@ int main() {
     do {
         system("cls"); 
         int option, option2, option3, maxIter = 2000;
-		double xi, xf, tolBi = 1e-3, tolUser, absErr = 1e-8 , relErr = absErr*100.00, relErrUser, step;
+		double xi, xf, tolBi = 1e-3, tolUserBi, tolNR = 1e-3, tolUserNR, absErr = 1e-8 , relErr = absErr*100.00, step;
+		double a, b, fx;
+		vector<double> xValues, yValues;
 		/* I choose this tolBi to be the deffect tolerance for the bisection method to stop,
 		since the purpose of this hybrid method is to use less computational power and get a faster result with newton method. 
 		tolUser is in case the the user knows or requires an specific tolerance and understand that it will take more computational power.
@@ -107,65 +111,89 @@ int main() {
         cout << "xi = ";
         cin >> xi;
         cout << "xf = ";
-        cin >> xi;
+        cin >> xf;
         cout << "Please select the step for each iteration e.g (1, 0.5, .., 0.1): ";
         cin >> step;
         cout << endl;
         
-        cout << "¡¡TOLERANCE DISCLAIMER FOR BISECTION METHOD!!"<<endl;
-        // let's talk about tolerance
+        cout << "¡¡TOLERANCE AND ERROR DISCLAIMER!!"<<endl;
+        // let's talk about tolerance and error management 
         cout << "In metrology, tolerance is the margin of error or variation allowed\n"
      		 << "in the manufacturing of a part with respect to its dimension or\n"
      		 << "characteristic specified in the drawing, guaranteeing its functionality."
      		 << endl;
     	cout << endl;
-    	cout << "In numerical methods, tolerance is the allowed error limit\n"
-     		 << "used to stop iterative algorithms when the solution is close enough,\n"
-     		 << "balancing accuracy with computational cost." 
+    	cout << "In numerical methods, tolerance is the error threshold we decide\n"
+     		 << "to accept so that the iterations stop when the solution is\n"
+     		 << "close enough to the true root.\n"
+			 << "\n"
+			 << "This program uses the relative error as stopping criterion,\n"
+			 << "defined as: |x(k) - x(k-1)| / |x(k)|.\n"
+			 << "The tolerance must be entered as a value between 0 and 1.\n"
+			 << "Example: a tolerance of 1e-3 means iterations stop when\n"
+			 << "the relative error is smaller than 0.001.\n"
 			 << endl;
+			
 			 
 		cout << endl;
 		cout << "If you need an specific tolerance for the bisection method press 1, otherwise, press 2: ";
 		cin >> option2;
-		cout << endl;
-		
+		cout << endl;	
 		// In case the user needs an specific tolerance for the bisection method to stop, he/him will be able to do it, otherwise, a default tolerance will be used
 		if(option2 == 1){
 			cout << "Please enter the tolerance needed to stop iterations for bisection method: ";
-			cin >> tolUser;
+			cin >> tolUserBi;
 			cout << endl;
 		} else {
 			cout <<"Default tolerance to stop bisection method iterations is: "<< tolBi << endl;
 		}
 		
+		
 		cout<<endl;
-		cout << "This program calculates the stopping criteria for the newton-rapshon method using a relative error.\n"
-			 << "If you need an specific relative error to stop the the iterations, press 1, otherwise, press 2: ";
+		cout << "If you need an specific tolerance to stop the Newton-Rapshon method iterations, press 1, otherwise, press 2: ";
 		cin >> option3;
 		cout << endl;
-		
 		//In case the user needs an specific relative error
 		if(option3 == 1){
-			cout << "Please enter the relative error required to stop iterations (Enter a percentage number, e.g 10%, 56%,..100% without the % symbol): ";
-			cin >> relErrUser;
+			cout << "Please enter the tolerance required to stop iterations: ";
+			cin >> tolUserNR;
 			cout << endl;
 		} else {
-			cout << "The default relative error for stopping newton-rapshon iterations is: " << relErr << "%" << endl;
+			cout << "Default tolerance for stopping newton-rapshon iterations is: " << tolNR << endl;
 		}
 		cout << endl;
-		cout << "This program will stop at 2000 iterations if has not reached the paremeters entered" << endl;
+		cout << "This program will stop at 2000 iterations if it has not reached the parameters entered" << endl;
 		cout << "Iterating..."<<endl;
 		cout << endl;
         
 
         cout << "Want to try a different function? (1 = yes, 0 = no): ";
         cin >> repeat;
+        
+        /* For simplicity I'm going to save the values for x and f(x) in a csv
+		   apart from the results so both data of the iterations and the values of the function create discrepancies. 
+		*/
+    	
+    	ofstream file1("xValues&yValues.csv");
+    	file1 << "x, f(x)\n";
+    	for(double i=xi; i<=xf; i = i + step){
+    		fx = f(i, option);
+    		xValues.push_back(i);
+    		yValues.push_back(fx);
+    		file1 << fixed << setprecision(8) << i << ", " << fx << "\n";
+		}
+		file1.close();
+		    
+        // Iterations start here, first I will start with the bisection method and then when the tolerance is achieved, it will jump right into Newton's-Rapshon method
+        for(double i=xi; i<=xf; i = i + step){
+        	a = i;
+        	b = i + step;
+        	if(f(a, option)*f(b, option) < 0){
+        		
+			}
+		}
 
     } while (repeat == 1);
 
     return 0;
 }
-
-    return 0;
-}
-
