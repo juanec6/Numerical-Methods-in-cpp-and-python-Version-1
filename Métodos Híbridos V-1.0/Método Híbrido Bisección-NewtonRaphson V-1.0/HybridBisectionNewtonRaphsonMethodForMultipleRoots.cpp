@@ -1,6 +1,3 @@
-// Validar las entradas del usuario (intervalos correctos, pasos >0, opciones válidas) 
-// Validar que xi < xf 
-
 #include <iostream> // Allows standard input and output: cin, cout, cerr
 #include <cmath> // Includes mathematical functions such as sin(), cos(), sqrt(), pow(), exp(), etc.
 #include <vector> // Allows the use of dynamic vectors (arrays that can change size).
@@ -82,10 +79,10 @@ int main() {
     
     do {
         system("cls"); 
-        int option, option2, option3, maxIter = 2000, iter = 0;
-		double xi, xf, tolBi = 1e-3, tolUserBi, tolNR = 1e-3, tolUserNR, absErr = 1e-8 , relErr = absErr*100.00, step;
-		double a, b, fx, x0;
-		vector<double> xValues, yValues;
+        int option, option2, option3, maxIter = 200, iter, iterNR;
+		double xi, xf, xn, xn1, tolBi = 1e-3, tolUserBi, tolNR = 1e-3, tolUserNR, step;
+		double a, b, fx, x0, dfx, ddfx;
+		vector<double> xValues, yValues, roots, RelativeError;
 		/* I choose this tolBi to be the deffect tolerance for the bisection method to stop,
 		since the purpose of this hybrid method is to use less computational power and get a faster result with newton method. 
 		tolUser is in case the the user knows or requires an specific tolerance and understand that it will take more computational power.
@@ -119,8 +116,8 @@ int main() {
         cout << "xf = ";
         cin >> xf;
         
-        // Validates that xi is less or not equal to xf
-        while(xi>=xf){
+        // Validates that xf is less or not equal to xi
+        while(xf<=xi){
         	cout << "xi can't be bigger or equal to xf, please try again."<< endl;
         	cout << "Please select the interval [xi, xf] you want to evaluate:"<< endl;
 	        cout << "xi = ";
@@ -165,6 +162,7 @@ int main() {
 		if(option2 == 1){
 			cout << "Please enter the tolerance needed to stop iterations for bisection method: ";
 			cin >> tolUserBi;
+			tolBi = tolUserBi;
 			cout << endl;
 		} else {
 			cout <<"Default tolerance to stop bisection method iterations is: "<< tolBi << endl;
@@ -180,6 +178,7 @@ int main() {
 			cout << "Please enter the tolerance required to stop iterations: ";
 			cin >> tolUserNR;
 			cout << endl;
+			tolNR = tolUserNR;
 		} else {
 			cout << "Default tolerance for stopping newton-rapshon iterations is: " << tolNR << endl;
 		}
@@ -188,15 +187,11 @@ int main() {
 		cout << "Iterating..."<<endl;
 		cout << endl;
         
-
-        cout << "Want to try a different function? (1 = yes, 0 = no): ";
-        cin >> repeat;
-        
         /* For simplicity I'm going to save the values for x and f(x) in a csv
 		   apart from the results so both data of the iterations and the values of the function create discrepancies. 
 		*/
     	
-    	ofstream file1("xValues&yValues.csv");
+    	ofstream file1("xValuesyValues.csv");
     	file1 << "x, f(x)\n";
     	for(double i=xi; i<=xf; i = i + step){
     		fx = f(i, option);
@@ -209,9 +204,17 @@ int main() {
         // Iterations start here, first I will start with the bisection method and then when the tolerance is achieved, it will jump right into Newton's-Rapshon method
         for(double i=xi; i<=xf; i = i + step){
 			iter = 0;	
+			iterNR = 0;
         	a = i;
         	b = i + step;
-        	if(f(a, option)*f(b, option) < 0 && option2 == 1){
+        	
+        	// Avoids division by zero when calculating the relative error 
+        	if(abs(b) == 0){
+        		cout << "Skipping b = " << b << " because b ≈ 0" << endl;
+			    continue;
+			}
+			
+        	if(f(a, option)*f(b, option) < 0){
         		do {
         			x0 = (a+b)/2.0;
         			if(f(a, option)*f(x0, option) < 0){
@@ -220,24 +223,64 @@ int main() {
 						a = x0;
 					}
 					iter++;
-				} while(abs((b-a)/b) >= tolUserBi && iter <= maxIter ); // This will be for user tolerance input
-			} else {
-				do {
-        			x0 = (a+b)/2.0;
-        			if(f(a, option)*f(x0, option) < 0){
-        				b = x0;
-					} else{
-						a = x0;
-					}
-					iter++;
-				} while(abs(b-a)/abs(b) >= tolBi && iter <= maxIter); // Defatul tolerance 1e-3
+				} while(abs(b-a)/abs(b) >= tolBi && iter <= maxIter); // Remember tolBi can be either a defult value 1e-3 or user tolerance input value.
 			}
+			
+			// We only start Newton if derivatives are valid
+			if (fabs(ddf(x0, option)) == 0) {
+			    cout << "Skipping x0 = " << x0 << " because ddf(x0) ≈ 0" << endl;
+			    continue;
+			}
+			if (fabs(df(x0, option)) == 0) {
+			    cout << "Skipping x0 = " << x0 << " because df(x0) ≈ 0" << endl;
+			    continue;
+			}
+			
+			
+			// Kantarovich condition
+			if(abs(f(x0, option) * ddf(x0, option)) < pow(abs(df(x0, option)), 2)){
+				xn = x0;
+					
+				do{
+					dfx = df(xn, option);
+					xn1 = xn - f(xn, option) / dfx;
+
+					// Stopping criteria and roots found
+					if (abs(xn1 - xn) / abs(xn1) <= tolNR || xn1 <= 1e-12)
+					{
+   					    roots.push_back(xn1);
+    					RelativeError.push_back(abs(xn1 - xn) / abs(xn1));
+   						break;
+					}
+					else
+					{
+					    xn = xn1;
+					}
+					iterNR++;
+				} while(iterNR <= maxIter);
+    		}
 		}
-		// Now that we got our first approximation x0 when can use it with newton-rapshon method
+		
+		
+		ofstream file2("roots.csv");
+		file2 << "Roots, RelativeError\n";			
+		for(int i=0; i < roots.size(); i++)
+		{
+			file2 << fixed << setprecision(4)
+                  << roots[i] << ", "
+                  << RelativeError[i]<< "\n";
+		}
+		file2.close();
+		
+		cout<<"Creando Gráfica..."<<endl;
+        Sleep(1000);
+        system("\"C:\\Users\\jdecr\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" VIsualizationHybridBisectionNewtonRaphsonMethod.py");
+		file1.close();
+		file2 .close();
+		cout << "Want to try a different function? (1 = yes, 0 = no): ";
+        cin >> repeat;
 
     } while (repeat == 1);
 
     return 0;
 }
-
-
