@@ -28,4 +28,22 @@ This integration between the two languages provides both **computational efficie
 
 Example of the command used in C++ to execute the Python script:
 ```cpp
-system("\"C:\\Path\\to\\Python\\python.exe\" VisualizationBisectionMethod.py");
+
+### ⚠️ Important Notes
+
+This version is currently compatible **only with Windows OS**, due to a specific C++ library used in the implementation.  
+
+Future updates aim to improve **cross-platform support** (Linux/macOS).
+
+---
+
+### ⚖️ Legal Notice
+
+Copyright © 2025 **Juan David Escobar Cruz**
+
+All rights reserved.  
+This repository and its contents are the **intellectual property of the author**.  
+No part of this code or documentation may be copied, modified, distributed, or used for **commercial, educational, or research purposes** without explicit written permission.
+
+For collaboration or redistribution requests, please contact the author directly.
+
