@@ -1,5 +1,6 @@
 ## Purpose of the Repository
 
+"This repository is my first implementation of numerical methods in C++ and Python. It reflects my learning phase and aims to document my progress as I build more robust and efficient versions."
 The goal of this repository is to demonstrate how **numerical methods** can be implemented in **C++** to perform iterative or analytical computations, and how **Python** can be used to visualize and analyze those results.  
 
 This integration between the two languages provides both **computational efficiency** (from C++) and **clarity in visualization** (from Python), making it a great resource for learning, experimentation, and teaching numerical analysis concepts.
