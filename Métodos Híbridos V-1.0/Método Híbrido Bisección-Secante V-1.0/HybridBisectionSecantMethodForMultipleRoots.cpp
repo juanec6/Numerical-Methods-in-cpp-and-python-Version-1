@@ -229,9 +229,5 @@ int main()
         cin >> repeat;
     }while(repeat == 1);
         
-		
+	return 0;
 } 
-    
-		
-} 
-
