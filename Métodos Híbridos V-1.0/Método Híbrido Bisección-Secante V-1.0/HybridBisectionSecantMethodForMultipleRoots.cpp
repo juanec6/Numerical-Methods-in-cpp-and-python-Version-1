@@ -52,13 +52,13 @@ int main()
     do
 	{
 		//Variables and vectors:
-		double xi, xf, step, tolBi, tolSec, fx, fx0, fx1, a, b, x0, x_1;
-		int iterBi, iterSec, maxIter=1000;
-		vector<double> xValues, yValues;
+		double xi, xf, step, tolBi, tolSec, fx, fx0, fx1, a, b, x0, x_1, x_prev, x_curr, x_next;
+		int iterBi, iterSec, maxIter=1000, option;
+		vector<double> xValues, yValues, roots;
 			
 		cout << "----- HYBRID BISECTION AND SECANT METHOD FOR FINDING MULTIPLE ROOTS -----" << endl;
 		cout << endl;
-		count << endl;
+		cout << endl;
 		cout << "¡¡TOLERANCE AND ERROR DISCLAIMER!!"<<endl;
         // let's talk about tolerance and error management 
         cout << "In metrology, tolerance is the margin of error or variation allowed\n"
@@ -136,16 +136,6 @@ int main()
         cout << "Please enter the tolerance for the secant method: tolSec = ";
         cin >> tolSec;
         
-        // Let's verify that the tolerances entered are not equal to zero or less than zero
-        do
-        {	
-        	cout<< "¡¡Tolerance cannot be less or equal to zero!!" << endl;
-        	cout<<"Please enter the tolerance for the bisection method: tolBi = ";
-        	cin >> tolBi;
-        	cout << endl;
-        	cout << "Please enter the tolerance for the secant method: tolSec = ";
-        	cin >> tolSec;
-		}while(tolbi <= 0 || tolSec <=0);
 		
 		//Now that all these validations are done, let's first save the x values and f(x) values in an csv for simplicity when plotting.
 		ofstream file1("XvaluesXvalues.csv");
@@ -154,7 +144,7 @@ int main()
 			fx = f(i, option);
 			xValues.push_back(i);
 			yValues.push_back(fx);
-			file1 << fixed << setprecision(8) << i < ", " << fx << "\n";
+			file1 << fixed << setprecision(8) << i << ", " << fx << "\n";
 		}
 		file1.close();
 		
@@ -167,9 +157,10 @@ int main()
 			b = i + step;
 			
 			//It is necessary to validated that b is not equal to zero to avoid division by zero when calculating relative error
-			if (a == 0)
+			if (b == 0)
 			{
-				cout << "Skipping b = " << b << " because b ≈ 0" << endl;
+				cout<<endl;
+				cout << "Skipping b = " << b << " because b ≈ 0 which will implicate a division in the relative error formula" << endl;
 			    continue;
 			} 
 			
@@ -185,17 +176,62 @@ int main()
 					} else{
 						a = x0;
 					}
-					
 					iterBi++;
-				}while(abs(b-a)/abs(b) >= tolBi && iterBi <= maxIter0);
+					
+					double relErrBi = abs(b-a)/abs(b);
+					
+					//Now we check if the relative error of the bisection method is maybe less than the tolerance of the secant method
+					if(relErrBi <= tolSec || relErrBi >= tolSec)
+					{
+						x_prev = a;
+						x_curr = b;
+						double relErrorSec;
+						
+						do
+						{
+							fx0 = f(x_prev, option);
+							fx1 = f(x_curr, option);
+							
+							//Let's check that fx1 - fx is not equal to zero
+							if(fabs(fx1-fx0) < 1e-12)
+							{
+								cout<<endl;
+								cout << "Division by zero risk in secant method — skipping." << endl;
+        						break;
+							}
+							
+							//Secant method formula
+							x_next = x_curr - fx1 * (x_curr - x_prev) / (fx1 - fx0);
+							
+							//Relative error calculation
+							relErrorSec = fabs((x_next - x_curr) / x_next);
+							
+							//now we update the values:
+							x_prev = x_curr;
+							x_curr = x_next;
+							roots.push_back(x_curr);
+							iterSec++;
+						}while(relErrorSec >= tolSec && iterSec <= maxIter);
+						
+						cout << fixed << setprecision(8);
+						cout << "\nRoot found near x = " << x_curr
+							 << " | f(x) = " << f(x_curr, option)
+							 << " | Bi iters: " << iterBi
+							 << " | Sec iters: " << iterSec
+							 << endl;
+						break;
+					}
+				} while(abs(b-a)/abs(b) >= tolBi && iterBi <= maxIter);
 			}
 		}
-		
-		
-	
+		cout<<endl;
         cout << "Want to try a different function? (1 = yes, 0 = no): ";
         cin >> repeat;
     }while(repeat == 1);
         
 		
 } 
+    
+		
+} 
+
