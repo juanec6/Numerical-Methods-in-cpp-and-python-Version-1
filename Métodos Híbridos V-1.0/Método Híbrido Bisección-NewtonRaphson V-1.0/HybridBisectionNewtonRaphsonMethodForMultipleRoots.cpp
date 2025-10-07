@@ -11,7 +11,7 @@
 
 using namespace std;
 
-string funcion_str(int option) {
+string function_str(int option) {
     switch(option) {
         case 1: return "f(x) = sin(x) + 0.5*sin(3x) + 0.25*sin(5x)";
         case 2: return "f(x) = sin(50x)*exp(-x^2/100)";
@@ -108,7 +108,7 @@ int main() {
 		    cout << "Invalid option. Please select between 1 and 7: ";
 		    cin >> option;
 		}
-        cout << "\nSelected function: " << funcion_str(option) << endl;
+        cout << "\nSelected function: " << function_str(option) << endl;
         cout << endl;
         cout << "Please select the interval [xi, xf] you want to evaluate:"<<endl;
         cout << "xi = ";
@@ -284,6 +284,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
