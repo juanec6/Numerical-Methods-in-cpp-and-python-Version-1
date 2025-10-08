@@ -54,7 +54,7 @@ int main()
 		//Variables and vectors:
 		double xi, xf, step, tolBi, tolSec, fx, fx0, fx1, a, b, x0, x_1, x_prev, x_curr, x_next;
 		int iterBi, iterSec, maxIter=1000, option;
-		vector<double> xValues, yValues, roots;
+		vector<double> xValues, yValues, roots, relErrSec, relErrBisection;
 			
 		cout << "----- HYBRID BISECTION AND SECANT METHOD FOR FINDING MULTIPLE ROOTS -----" << endl;
 		cout << endl;
@@ -179,6 +179,7 @@ int main()
 					iterBi++;
 					
 					double relErrBi = abs(b-a)/abs(b);
+					relErrBisection.push_back(relErrBi);
 					
 					//Now we check if the relative error of the bisection method is maybe less than the tolerance of the secant method
 					if(relErrBi <= tolSec || relErrBi >= tolSec)
@@ -210,6 +211,7 @@ int main()
 							x_prev = x_curr;
 							x_curr = x_next;
 							roots.push_back(x_curr);
+							relErrSec.push_back(relErrorSec);
 							iterSec++;
 						}while(relErrorSec >= tolSec && iterSec <= maxIter);
 						
@@ -218,16 +220,38 @@ int main()
 							 << " | f(x) = " << f(x_curr, option)
 							 << " | Bi iters: " << iterBi
 							 << " | Sec iters: " << iterSec
+							 << " | Relative Error: " << relErrorSec
 							 << endl;
 						break;
 					}
 				} while(abs(b-a)/abs(b) >= tolBi && iterBi <= maxIter);
 			}
 		}
+		
+		// roots and relative error of the secant method are saved in a csv file
+		ofstream file2("roots.csv");
+		file2 << "Roots, RelativeErrorSecant\n";			
+		for(int i=0; i < roots.size(); i++)
+		{
+			file2 << fixed << setprecision(8)
+                  << roots[i] << ", "
+                  << relErrSec[i]<< "\n";
+		}
+		file2.close();
+		
+		cout << endl;
+		cout << "Creating plot..." << endl;
+		Sleep(500);
+		system("\"C:\\Users\\jdecr\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\" VisualizationHybridBisectionSecantMethod.py");
+		file1.close();
+		file2.close();
 		cout<<endl;
-        cout << "Want to try a different function? (1 = yes, 0 = no): ";
+		cout << "Want to try a different function? (1 = yes, 0 = no): ";
         cin >> repeat;
     }while(repeat == 1);
         
 	return 0;
 } 
+    
+    
+    
