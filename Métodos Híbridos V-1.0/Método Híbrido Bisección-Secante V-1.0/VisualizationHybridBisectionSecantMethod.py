@@ -17,7 +17,7 @@ data3 = np.genfromtxt("bisectionErrors.csv",
 xValues = data1[:, 0]
 yValues = data1[:, 1]
 roots = data2[:, 0]
-SecRelErr = data2[:, 1]
+secRelErr = data2[:, 1]
 biError = data3[:]
 
 #Data frame to create plot of the function
@@ -29,7 +29,7 @@ df1 = pd.DataFrame({
 #Data frame for roots and relative error of the secant method
 df2 = pd.DataFrame({
     "roots": roots,
-    "SecRelErr": SecRelErr
+    "secRelErr": secRelErr
 })
 
 df3 = pd.DataFrame({"biError": biError})
@@ -63,8 +63,8 @@ ax1.autoscale()
 fig2, ax2 = plt.subplots(2, 1, figsize=(14, 5))
 
 # Evolution of the relative error of the secant method
-ax2[0].plot(range(1, len(df2) + 1), df2["SecRelErr"],
-            marker="o", color="green", label="Secant Method Relative Error")
+ax2[0].plot(range(1, len(df2) + 1), df2["biError"],
+            marker="o", color="green", label="Bisection Relative Error")
 ax2[0].set_title("Secant Relative Error Evolution")
 ax2[0].set_xlabel("Iteration")
 ax2[0].set_ylabel("Error")
@@ -72,8 +72,8 @@ ax2[0].grid(True)
 ax2[0].legend()
 
 # Evolution of the relative error of the bisection method
-ax2[1].plot(range(1, len(df3) + 1), df3["biError"],
-            marker="o", color="blue", label="Bisection Relative Error")
+ax2[1].plot(range(1, len(df3) + 1), df3["ecRelErr"],
+            marker="o", color="blue", label="Secant Method Relative Error")
 ax2[1].set_title("Bisection Relative Error Evolution")
 ax2[1].set_xlabel("Iteration")
 ax2[1].set_ylabel("Error")
@@ -82,3 +82,4 @@ ax2[1].legend()
 
 plt.tight_layout()
 plt.show()
+
